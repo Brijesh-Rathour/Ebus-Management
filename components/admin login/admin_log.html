@@ -1,0 +1,54 @@
+<html>
+    <head>
+        <title>Firebase_form</title>
+        <link rel="stylesheet" href="/index.css">
+    </head>
+    <body>
+        <nav class="navbar">
+            <ul class="nav-list">
+                <li><h2>Ebus Management</h2></li>
+              <li><a href="/components/admin login/admin_log.html">Admin</a></li>
+              <li><a href="/components/driver login/dr_log.html">Driver</a></li>
+              <li><a href="/index.html">User</a></li>
+            </ul>
+        </nav>
+        <div class="box">
+            <div class="form">
+                <h2>Admin login Form</h2>
+                <form id="loginForm">
+                    <div class="inputbox">
+                        <input type="text" value="" id="adminname" required>
+                        <span>username</span>
+                    </div>
+                    <div class="inputbox">
+                        <input type="password" value="" id="password" required>
+                        <span>Password</span>
+                    </div>
+                    <input type="submit" value="submit" class="sub" id="submit">
+                </form>
+            </div>
+        </div>
+        <script type="module">             
+               // Get a reference to the login form
+            const loginForm = document.getElementById('loginForm');
+
+                // Add an event listener for the form submit event
+            loginForm.addEventListener('submit', (event) => {
+                        event.preventDefault();
+                        // Get the values entered in the form fields
+                       changefun();
+                });
+                function changefun(){
+                    const ad = loginForm.elements['adminname'].value;
+                        const pd = loginForm.elements['password'].value;
+                        if(ad=='admino' && pd=='nonoise14'){   
+                            alert('welcome admin')   
+                            window.location.href='admin_add.html';
+                        }
+                        else{alert('wrong admin')}
+                }
+
+        </script>
+        
+    </body>
+</html>

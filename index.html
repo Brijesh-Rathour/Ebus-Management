@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>initial</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <nav class="navbar">
+        <ul class="nav-list">
+            <li><h2>Ebus Management</h2></li>
+          <li><a href="/components/admin login/admin_log.html">Admin</a></li>
+          <li><a href="/components/driver login/dr_log.html">Driver</a></li>
+          <li><a href="/index.html">User</a></li>
+        </ul>
+    </nav>
+        <div class="box">
+            <div class="form">
+                <h2>User login Form</h2>
+                <form id="loginForm">
+                    <div class="inputbox">
+                        <input type="text" value="" id="username" required>
+                        <span>username</span>
+                    </div>
+                    <div class="inputbox">
+                        <input type="password" value="" id="password" required>
+                        <span>Password</span>
+                    </div>
+                    <input type="submit" value="submit" class="sub" id="submit">
+                </form>
+            </div>
+            <p>Don't have an account?<a href="/components/user registration/reg.html">Register</a></p>
+        </div>
+        <script type="module">             
+            // Import the functions you need from the SDKs you need
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+            import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+            
+            // Your web app's Firebase configuration
+            const firebaseConfig = {
+                apiKey: "AIzaSyADFrTI9hs0563vJlVV2LopRGyPNupYSD8",
+                authDomain: "project3-39d63.firebaseapp.com",
+                projectId: "project3-39d63",
+                storageBucket: "project3-39d63.appspot.com",
+                messagingSenderId: "211637826568",
+                appId: "1:211637826568:web:e9bbe3d33eeea3ad564dbd"
+            };
+
+            // Initialize Firebase
+            const app = initializeApp(firebaseConfig);
+            //get ref to datbase service
+                            // Initialize Firebase database
+            const database = getDatabase();
+
+                // Reference to the location in your database from which you want to retrieve data
+            const usersRef = ref(database, 'user/');
+                // Fetch data once
+               // Get a reference to the login form
+            const loginForm = document.getElementById('loginForm');
+
+                // Add an event listener for the form submit event
+            loginForm.addEventListener('submit', (event) => {
+            event.preventDefault(); // Prevent default form submission
+
+                        // Get the values entered in the form fields
+                        const username = loginForm.elements['username'].value;
+                        const password = loginForm.elements['password'].value;
+
+                        // Fetch data once
+                        get(usersRef)
+                            .then((snapshot) => {
+                            if (snapshot.exists()) {
+                                // The snapshot contains the retrieved data
+                                const usersData = snapshot.val();
+
+                                // Iterate over the users and compare username and password
+                                for (const userId in usersData) {
+                                    if (Object.hasOwnProperty.call(usersData, userId)) {
+                                            const userData = usersData[userId];
+                                            if (userData.username === username && userData.password === password) {
+                                                alert('Login successful for user:', userId);
+                                                // You can redirect the user to another page or perform other actions here
+                                                window.location.href = '/components/search/search.html';
+                                                return;
+                                            }
+                                    }
+                                }
+                                // If no matching user is found
+                                alert('No user found with the provided credentials');
+                            } else {
+                                alert('No users found in the database');
+                            }
+                            })
+                            .catch((error) => {
+                            alert('Error fetching user data:', error);
+                            });
+                });
+
+        </script>
+    </body>
+</html>

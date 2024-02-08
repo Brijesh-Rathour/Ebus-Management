@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Search Form</title>
+    <link rel="stylesheet" href="search.css">
+</head>
+<body>
+    <div class="box">
+        <div class="form">
+            <h2>Search Bus</h2>
+            <form id="loginForm">
+                <div class="inputbox">
+                    <span>From </span><input type="text" value="" id="dep" required>
+                </div>
+                <div class="inputbox">
+                    <span>To</span><input type="text" value="" id="des" required>
+                </div>
+                <input type="submit" value="Submit" class="sub" id="submit"><br><br>
+                <div class="output"></div>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        // Import necessary functions from the Firebase Realtime Database module
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyADFrTI9hs0563vJlVV2LopRGyPNupYSD8",
+                authDomain: "project3-39d63.firebaseapp.com",
+                projectId: "project3-39d63",
+                storageBucket: "project3-39d63.appspot.com",
+                messagingSenderId: "211637826568",
+                appId: "1:211637826568:web:e9bbe3d33eeea3ad564dbd"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+
+        // Get a reference to the login form
+        const loginForm = document.getElementById('loginForm');
+        const outputElement = document.querySelector('.output');
+
+        // Add an event listener for the form submit event
+        loginForm.addEventListener('submit', (event) => {
+            event.preventDefault(); // Prevent default form submission
+
+            // Get the values entered in the form fields
+            const dep = loginForm.elements['dep'].value;
+            const des = loginForm.elements['des'].value;
+
+            // Reference to the location in your database from which you want to retrieve data
+            const database = getDatabase();
+            const usersRef = ref(database, 'busInformation/');
+
+            // Fetch data once
+            get(usersRef)
+                .then((snapshot) => {
+                    if (snapshot.exists()) {
+                        // The snapshot contains the retrieved data
+                        const usersData = snapshot.val();
+                        let busFound = false;
+
+                        // Iterate over the users and compare destination and starting point
+                        for (const userId in usersData) {
+                            const userData = usersData[userId];
+                            if (userData.Destination === des && userData.Starting === dep) {
+                                busFound = true;
+                                showdet(userData);
+                                break;
+                            }
+                        }
+
+                        if (!busFound) {
+                            outputElement.textContent = 'No bus found from: ' + dep + ' to: ' + des;
+                        }
+                    } else {
+                        outputElement.textContent = 'No data available.';
+                    }
+                })
+                .catch((error) => {
+                    outputElement.textContent = 'Error fetching data: ' + error.message;
+                });
+        });
+
+        function showdet(userData) {
+            outputElement.innerHTML = `
+                <h3>Bus Details</h3>
+                <p><strong>Bus number:</strong> ${userData.bus_number}</p>
+                <p><strong>Starting:</strong> ${userData.Starting}</p>
+                <p><strong>Destination:</strong> ${userData.Destination}</p>
+                <p><strong>Departure:</strong> ${userData.Departure}</p>
+                <p><strong>Reachiing time(Estimated):</strong> ${userData.to_be_Reached}</p>
+            `;
+        }
+    </script>
+</body>
+</html>
